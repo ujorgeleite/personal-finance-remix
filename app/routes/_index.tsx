@@ -44,12 +44,12 @@ export default function Index() {
 	const [isloading, setIsLoading] = React.useState<boolean>(false);
 
 	return (
-		<div>
+		<div className='m-8'>
 
 			<Form method='post' encType='multipart/form-data' action='/dashboards/list'>
 				<input type='hidden' name='spreadSheetField' value={spreadsheetData} />
-				<input type="file" id="input" name="fileUpload" disabled={isloading} onChange={(event) => handleFileChange(event, setSpreadsheetData, setIsLoading)} />
-				<button type="submit" disabled={isloading || spreadsheetData.length == 0}>Upload</button>
+				<input  type="file" id="input" name="fileUpload" disabled={isloading} onChange={(event) => handleFileChange(event, setSpreadsheetData, setIsLoading)} />
+				<button className='bg-indigo-500 hover:bg-indigo-400 disabled:bg-indigo-100 p-1 pl-2 pr-2 rounded-lg text-white' type="submit" disabled={isloading || spreadsheetData.length == 0}>Upload</button>
 			</Form>
 			{isloading && <LoadingData />}
 
