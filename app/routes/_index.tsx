@@ -1,12 +1,12 @@
-import { json, type MetaFunction } from "@remix-run/node";
-import { useLoaderData } from '@remix-run/react';
-import readXlsxFile, { ParsedObjectsResult } from 'read-excel-file';
-import { readFile } from 'fs/promises';
+import { type MetaFunction } from "@remix-run/node";
+import { Form } from '@remix-run/react';
+import readXlsxFile, { readSheetNames } from 'read-excel-file';
 import { spreadSheetSchema } from '../services/types'
+import { ChangeEvent } from 'react';
+import React from 'react';
+import { LoadingData } from '~/components/shared/loader';
 
 
-
-//remix load data
 export const meta: MetaFunction = () => {
 	return [
 		{ title: "New Remix App" },
@@ -14,37 +14,44 @@ export const meta: MetaFunction = () => {
 	];
 };
 
-
 interface SheetNamesType {
 	name: string;
 }
 
-const handleFileChange = async (event) => {
-	const file = event.target.files[0];
 
-	const sheetNames = await readXlsxFile(file, { getSheets: true });
-	const lists = sheetNames.map((item) => {
-		const rows = readXlsxFile(file, { schema: spreadSheetSchema, sheet: item.name });
-		return rows;
-	})
-	console.log("🚀 ~ file: _index.tsx:29 ~ lists ~ lists:", lists)
+const handleFileChange = async (event: ChangeEvent<HTMLInputElement>, setData: any, setIsLoading: any) => {
+	const file = event.target.files?.[0];
+	setIsLoading(true);
 
-	const rows = await Promise.all(lists);
-	console.log("🚀 ~ file: _index.tsx:31 ~ handleFileChange ~ rows:", rows)
+	try {
+		if (file) {
+			const sheetNames: string[] = await readSheetNames(file);
+			const spreadsheetPromises = sheetNames.map((sheetName) => readXlsxFile(file, { schema: spreadSheetSchema, sheet: sheetName }))
 
-
-
-
-
-	console.log("🚀 ~ file: _index.tsx:34 ~ handleFileChange ~ sheetNames:", rows.length)
-
-};
+			const spreadsheetLists = await Promise.all(spreadsheetPromises)
+			debugger
+			setData(JSON.stringify(spreadsheetLists));
+			setIsLoading(false);
+		}
+	} catch (e) {
+		console.log("🚀 ~ erro ao tentar fazer upload do arquivo:", e)
+		alert('Erro ao tentar fazer upload do arquivo');
+		setIsLoading(false);
+	};
+}
 export default function Index() {
-
+	const [spreadsheetData, setSpreadsheetData] = React.useState<string>('');
+	const [isloading, setIsLoading] = React.useState<boolean>(false);
 
 	return (
 		<div>
-			<input type="file" id="input" onChange={handleFileChange} />
+
+			<Form method='post' encType='multipart/form-data' action='/dashboards/list'>
+				<input type='hidden' name='spreadSheetField' value={spreadsheetData} />
+				<input type="file" id="input" name="fileUpload" disabled={isloading} onChange={(event) => handleFileChange(event, setSpreadsheetData, setIsLoading)} />
+				<button type="submit" disabled={isloading || spreadsheetData.length == 0}>Upload</button>
+			</Form>
+			{isloading && <LoadingData />}
 
 		</div>
 	);
