@@ -16,7 +16,7 @@ export const spreadSheetSchema = {
 				},
 				'Pago': {
 					prop:'pago',
-					type: Boolean
+					type: String
 
 				},
 				'ValorPago': {
