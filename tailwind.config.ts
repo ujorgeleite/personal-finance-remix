@@ -8,8 +8,8 @@ export default {
       center: true,
     },
 					colors: {
-						'primary': '#F4AEB4',
-						'secondary': '#CBE4E1'
+						'primary': '#8700C6',
+						'secondary': '#00FF73'
 					},
 					backgroundImage: {
 						'logo': "url('/assets/images/logo.jpg')",

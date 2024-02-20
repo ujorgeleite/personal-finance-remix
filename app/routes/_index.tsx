@@ -5,6 +5,7 @@ import { spreadSheetSchema } from '../services/types'
 import { ChangeEvent } from 'react';
 import React from 'react';
 import { LoadingData } from '~/components/shared/loader';
+import { style } from '~/components/shared/styles';
 
 
 export const meta: MetaFunction = () => {
@@ -48,11 +49,11 @@ export default function Index() {
 
 			<Form method='post' encType='multipart/form-data' action='/dashboards/list'>
 				<input type='hidden' name='spreadSheetField' value={spreadsheetData} />
-				<input  type="file" id="input" name="fileUpload" disabled={isloading} onChange={(event) => handleFileChange(event, setSpreadsheetData, setIsLoading)} />
-				<button className='bg-indigo-500 hover:bg-indigo-400 disabled:bg-indigo-100 p-1 pl-2 pr-2 rounded-lg text-white' type="submit" disabled={isloading || spreadsheetData.length == 0}>Upload</button>
-			</Form>
-			{isloading && <LoadingData />}
+				<input type="file" id="input" name="fileUpload" disabled={isloading} onChange={(event) => handleFileChange(event, setSpreadsheetData, setIsLoading)} />
+				<button className={style.actionButton} type="submit" disabled={isloading || spreadsheetData.length == 0}>Upload</button>
+		</Form>
+			{ isloading && <LoadingData /> }
 
-		</div>
+		</div >
 	);
 }
