@@ -6,6 +6,8 @@ import { ChangeEvent } from 'react';
 import React from 'react';
 import { LoadingData } from '~/components/shared/loader';
 import { style } from '~/components/shared/styles';
+import { mapPayments } from '~/services/mappers/mapPayments';
+import { insertPayment } from '~/services/repositories/payments';
 
 
 export const meta: MetaFunction = () => {
@@ -30,8 +32,17 @@ const handleFileChange = async (event: ChangeEvent<HTMLInputElement>, setData: a
 			const spreadsheetPromises = sheetNames.map((sheetName) => readXlsxFile(file, { schema: spreadSheetSchema, sheet: sheetName }))
 
 			const spreadsheetLists = await Promise.all(spreadsheetPromises)
+			const listByYearMonth = spreadsheetLists.map((spreadsheetList, index) => {
+				const year = sheetNames[index].slice(sheetNames[index].length - 4, sheetNames[index].length);
+				const month = sheetNames[index].replace(year, '');
+
+
+				return { ...spreadsheetList, year, month }
+
+			}).filter((item) => item.year.includes('20'));
 			debugger
-			setData(JSON.stringify(spreadsheetLists));
+			const payments = mapPayments(listByYearMonth);
+			setData(JSON.stringify(payments));
 			setIsLoading(false);
 		}
 	} catch (e) {
@@ -51,8 +62,8 @@ export default function Index() {
 				<input type='hidden' name='spreadSheetField' value={spreadsheetData} />
 				<input type="file" id="input" name="fileUpload" disabled={isloading} onChange={(event) => handleFileChange(event, setSpreadsheetData, setIsLoading)} />
 				<button className={style.actionButton} type="submit" disabled={isloading || spreadsheetData.length == 0}>Upload</button>
-		</Form>
-			{ isloading && <LoadingData /> }
+			</Form>
+			{isloading && <LoadingData />}
 
 		</div >
 	);
