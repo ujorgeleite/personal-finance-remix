@@ -1,10 +1,11 @@
 // Filename: prismaHandler.ts
 
 import { PrismaClient } from '@prisma/client';
+import { Income, Yearly } from '../types';
 
 const prisma = new PrismaClient();
 
-async function insertPayment(paymentData) {
+async function insertPayment(paymentData: Yearly) {
   try {
     const newPayment = await prisma.payments.create({
       data: paymentData,
@@ -15,7 +16,7 @@ async function insertPayment(paymentData) {
   }
 }
 
-async function findPaymentById(paymentId) {
+async function findPaymentById(paymentId: number) {
   try {
     const payment = await prisma.payments.findUnique({
       where: { id: paymentId },
@@ -27,7 +28,7 @@ async function findPaymentById(paymentId) {
   }
 }
 
-async function findPaymentsByYear(year) {
+async function findPaymentsByYear(year: string) {
   try {
     const payments = await prisma.payments.findMany({
       where: { year },
