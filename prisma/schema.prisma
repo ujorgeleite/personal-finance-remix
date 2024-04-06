@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Payments {
+  id    Int     @id @default(autoincrement())
+  year  String  
+  month  String?
+  bills Bill[]
+		incomes	Income[]
+}
+
+model Income {
+  id        Int     @id @default(autoincrement())
+  title     String
+  value     Float
+		payment    Payments    @relation(fields: [paymentId], references: [id])
+		paymentId Int
+}
+
+model Bill {
+  id        Int     @id @default(autoincrement())
+  title     String
+  value     Float
+		dueDate			String
+		paid 				Boolean
+		payment    Payments    @relation(fields: [paymentId], references: [id])
+		paymentId Int
+}

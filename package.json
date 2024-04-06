@@ -8,15 +8,20 @@
     "dev": "remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/index.js",
+				"database": "npx prisma studio",
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@prisma/client": "5.10.2",
     "@remix-run/css-bundle": "^2.4.1",
     "@remix-run/node": "^2.4.1",
     "@remix-run/react": "^2.4.1",
     "@remix-run/serve": "^2.4.1",
+    "@types/chart.js": "^2.9.41",
+    "chart.js": "^4.4.2",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "read-excel-file": "^5.7.1",
     "tailwind": "^4.0.0",
@@ -35,6 +40,7 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "file-loader": "^6.2.0",
+    "prisma": "^5.10.2",
     "typescript": "^5.1.6"
   },
   "engines": {
