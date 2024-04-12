@@ -3,6 +3,7 @@ import { useActionData } from '@remix-run/react';
 import React, { useState } from 'react';
 import { LoadingData } from '~/components/shared/loader';
 import { insertPayment } from '~/services/repositories/payments';
+import { Yearly } from '~/services/types';
 
 const mockedData = [
 	{
@@ -201,11 +202,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 	const formData = await request.formData();
 	const file = formData.get("spreadSheetField") as unknown as string;
-	const payments = JSON.parse(file);
+	const payments: Yearly[] = JSON.parse(file);
+
 
 	//iterar nos payments e inserir no banco	
 	//após terminar de inserir, retornar os dados para adicionar o id de payments nos bills e incomes
-	insertPayment(payments[0]);
+	// insertPayment(payments[0]);
 
 	return { data: payments };
 }
@@ -213,6 +215,7 @@ export default function Index() {
 	const { data } = useActionData<typeof action>() as { data: any };
 	// const data = mockedData;
 	const [expanded, setExpanded] = useState<number | null>(null);
+	debugger
 
 	const toggleExpanded = (index: number) => {
 		if (expanded === index) {
@@ -235,17 +238,15 @@ export default function Index() {
 				</button>
 				{expanded === index && (
 					<ul className="space-y-2">
-						{monthData.rows.map((item, i) => (
+						{monthData.bills?.map((item, i) => (
 							<li
 								key={i}
-								className={item.pago.toUpperCase() === "SIM" ? "bg-green-100 rounded p-4" : "bg-gray-100 rounded p-4"}
+								className={item.paid === true ? "bg-green-100 rounded p-4" : "bg-gray-100 rounded p-4"}
 							>
-								<p><strong>Finalidade:</strong> {item.finalidade}</p>
-								<p><strong>Valor:</strong> {item.valor}</p>
-								<p><strong>Vencimento:</strong> {item.vencimento}</p>
-								<p><strong>Pago:</strong> {item.pago}</p>
-								<p><strong>Origem:</strong> {item.origem}</p>
-								<p><strong>Rendimento:</strong> {item.rendimento}</p>
+								<p><strong>Finalidade:</strong> {item.title}</p>
+								<p><strong>Valor:</strong> {item.value}</p>
+								<p><strong>Vencimento:</strong> {item.dueDate}</p>
+								<p><strong>Pago:</strong> {item.paid === true ? "Sim" : "Não"}</p>
 							</li>
 						))}
 					</ul>

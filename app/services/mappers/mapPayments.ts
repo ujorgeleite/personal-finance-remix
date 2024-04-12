@@ -2,7 +2,7 @@
 
 	export const mapPayments = (item) => {
 
-debugger
+
 		
 		
 	 const payments = item.map((row) => {
@@ -34,7 +34,9 @@ debugger
 			
 return  {
 	month,
-	year
+	year,
+	bills,
+	incomes
 };
 			
 		});
