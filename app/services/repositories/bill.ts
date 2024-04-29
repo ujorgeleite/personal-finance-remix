@@ -7,14 +7,34 @@ const prisma = new PrismaClient();
 
 async function insertBill(paymentData: Bill) {
   try {
-    const newPayment = await prisma.bill.create({
-      data: paymentData,
-    });
-    return newPayment;
+    const newBill = await prisma.bill.create({
+      data: paymentData});
+    return newBill;
   } catch (error) {
     throw new Error(`Failed to insert payment: ${error}`);
   }
 }
+
+async function bulkInsertionBills(bills: Bill[], paymentId: number) {
+	try {
+		const billsCreated = await Promise.all(
+			bills.map(data =>  
+				prisma.bill.create({data: { ...data, paymentId }}))
+	);
+			return billsCreated;
+	} catch (error) {
+			throw new Error(`Failed to insert payment: ${error}`);
+	}
+}
+
+async function deleteAllBills() {	
+	try {
+		await prisma.bill.deleteMany({});
+	} catch (error) {
+		throw new Error(`Failed to delete all bills: ${error}`);
+	}
+}
+
 
 async function findBillById(paymentId: number) {
   try {
@@ -30,4 +50,4 @@ async function findBillById(paymentId: number) {
 
 
 
-export { insertBill, findBillById };
+export { insertBill, findBillById, bulkInsertionBills, deleteAllBills };

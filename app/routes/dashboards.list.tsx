@@ -1,10 +1,14 @@
 import { ActionFunctionArgs } from '@remix-run/node';
 import { useActionData } from '@remix-run/react';
 import React, { useState } from 'react';
+import GenericErrorBoundary from '~/components/shared/GenericErrorBoundary';
 import { LoadingData } from '~/components/shared/loader';
-import { insertPayment } from '~/services/repositories/payments';
-import { Yearly } from '~/services/types';
+import { bulkInsertionBills, deleteAllBills, insertBill } from '~/services/repositories/bill';
+import { deleteAllPayments, insertPayment } from '~/services/repositories/payments';
 
+
+import { Payments } from '@prisma/client';
+import { bulkInsertionIncomes, deleteAllIncomes } from '~/services/repositories/income';
 const mockedData = [
 	{
 		"rows": [
@@ -202,12 +206,28 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 	const formData = await request.formData();
 	const file = formData.get("spreadSheetField") as unknown as string;
-	const payments: Yearly[] = JSON.parse(file);
+	const payments: { year: string, month: string, bills: [], incomes: [] }[] = JSON.parse(file);
 
 
-	//iterar nos payments e inserir no banco	
-	//após terminar de inserir, retornar os dados para adicionar o id de payments nos bills e incomes
-	// insertPayment(payments[0]);
+
+	await Promise.all([deleteAllBills(), deleteAllIncomes()])
+	await deleteAllPayments();
+
+
+
+	payments.forEach(async (payment) => {
+		const { year, month, bills, incomes } = payment;
+
+		const newPayment = await insertPayment({ year, month } as Payments);
+		await Promise.all([bulkInsertionBills(bills, newPayment.id), bulkInsertionIncomes(incomes, newPayment.id)]);
+
+
+		console.log(newPayment);
+
+	});
+
+
+
 
 	return { data: payments };
 }
@@ -261,4 +281,9 @@ export default function Index() {
 			{renderList()}
 		</div>
 	);
+}
+
+export function ErrorBoundary({ error }: any) {
+	console.log(error);
+	return <GenericErrorBoundary {...error} />
 }

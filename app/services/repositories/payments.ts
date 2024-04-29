@@ -1,11 +1,11 @@
 // Filename: prismaHandler.ts
 
-import { PrismaClient } from '@prisma/client';
-import { Income, Yearly } from '../types';
+import { Payments, PrismaClient } from '@prisma/client';
+
 
 const prisma = new PrismaClient();
 
-async function insertPayment(paymentData: Yearly) {
+async function insertPayment(paymentData: Payments) {
   try {
     const newPayment = await prisma.payments.create({
       data: paymentData,
@@ -40,4 +40,14 @@ async function findPaymentsByYear(year: string) {
   }
 }
 
-export { insertPayment, findPaymentById, findPaymentsByYear };
+
+async function deleteAllPayments() {
+		try {
+				await prisma.payments.deleteMany({});
+		} catch (error) {
+				throw new Error(`Failed to delete all payments: ${error}`);
+		}
+}
+
+export { insertPayment, findPaymentById, findPaymentsByYear
+, deleteAllPayments };

@@ -7,7 +7,9 @@ import React from 'react';
 import { LoadingData } from '~/components/shared/loader';
 import { style } from '~/components/shared/styles';
 import { mapPayments } from '~/services/mappers/mapPayments';
-import { insertPayment } from '~/services/repositories/payments';
+import { deleteAllPayments, insertPayment } from '~/services/repositories/payments';
+import { deleteAllBills } from '~/services/repositories/bill';
+import { deleteAllIncomes } from '~/services/repositories/income';
 
 
 export const meta: MetaFunction = () => {
