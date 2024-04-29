@@ -20,18 +20,18 @@ model Payments {
 
 model Income {
   id        Int     @id @default(autoincrement())
-  title     String
-  value     Float
+  title     String @default("")
+  value     Float @default(0)
 		payment    Payments    @relation(fields: [paymentId], references: [id])
 		paymentId Int
 }
 
 model Bill {
   id        Int     @id @default(autoincrement())
-  title     String
-  value     Float
-		dueDate			String
-		paid 				Boolean
+  title     String @default("")
+  value     Float @default(0)
+		dueDate			String @default("")
+		paid 				Boolean @default(false)
 		payment    Payments    @relation(fields: [paymentId], references: [id])
 		paymentId Int
 }
