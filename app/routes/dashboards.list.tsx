@@ -1,10 +1,10 @@
 import { ActionFunctionArgs } from '@remix-run/node';
-import { useActionData } from '@remix-run/react';
+import { useActionData, useLoaderData } from '@remix-run/react';
 import React, { useState } from 'react';
 import GenericErrorBoundary from '~/components/shared/GenericErrorBoundary';
 import { LoadingData } from '~/components/shared/loader';
 import { bulkInsertionBills, deleteAllBills, insertBill } from '~/services/repositories/bill';
-import { deleteAllPayments, insertPayment } from '~/services/repositories/payments';
+import { deleteAllPayments, findAllPayments, insertPayment } from '~/services/repositories/payments';
 
 
 import { Payments } from '@prisma/client';
@@ -202,37 +202,17 @@ const mockedData = [
 	}];
 
 
-export const action = async ({ request }: ActionFunctionArgs) => {
 
-	const formData = await request.formData();
-	const file = formData.get("spreadSheetField") as unknown as string;
-	const payments: { year: string, month: string, bills: [], incomes: [] }[] = JSON.parse(file);
+export async function loader() {
+	const data = await findAllPayments();
 
 
-
-	await Promise.all([deleteAllBills(), deleteAllIncomes()])
-	await deleteAllPayments();
-
-
-
-	payments.forEach(async (payment) => {
-		const { year, month, bills, incomes } = payment;
-
-		const newPayment = await insertPayment({ year, month } as Payments);
-		await Promise.all([bulkInsertionBills(bills, newPayment.id), bulkInsertionIncomes(incomes, newPayment.id)]);
-
-
-		console.log(newPayment);
-
-	});
-
-
-
-
-	return { data: payments };
+	return { data}
 }
+
+
 export default function Index() {
-	const { data } = useActionData<typeof action>() as { data: any };
+	const { data } = useLoaderData<typeof loader>() as { data: any };
 	// const data = mockedData;
 	const [expanded, setExpanded] = useState<number | null>(null);
 	debugger

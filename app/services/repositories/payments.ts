@@ -1,4 +1,3 @@
-// Filename: prismaHandler.ts
 
 import { Payments, PrismaClient } from '@prisma/client';
 
@@ -15,6 +14,18 @@ async function insertPayment(paymentData: Payments) {
     throw new Error(`Failed to insert payment: ${error}`);
   }
 }
+
+
+
+async function findAllPayments() {
+	try {
+			const payments = await prisma.payments.findMany();
+			return payments;
+	} catch (error) {
+			throw new Error(`Failed to list all payments: ${error}`);
+	}
+}
+
 
 async function findPaymentById(paymentId: number) {
   try {
@@ -49,5 +60,5 @@ async function deleteAllPayments() {
 		}
 }
 
-export { insertPayment, findPaymentById, findPaymentsByYear
+export { insertPayment,findAllPayments, findPaymentById, findPaymentsByYear
 , deleteAllPayments };
