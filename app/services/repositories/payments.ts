@@ -19,7 +19,15 @@ async function insertPayment(paymentData: Payments) {
 
 async function findAllPayments() {
 	try {
-			const payments = await prisma.payments.findMany();
+			const payments = await prisma.payments.findMany({
+				select: {
+					id:true,
+					year:true,
+					month:true,
+					bills:true,
+					incomes:true
+				}
+			});
 			return payments;
 	} catch (error) {
 			throw new Error(`Failed to list all payments: ${error}`);
